@@ -15,14 +15,27 @@ import ErrorCorrection as errorCheck
 
 '''
 def timings():
-	global updateFlag
-	dt = pd.read_csv('td.csv',usecols='TimeDifference')
-	eventCounting = 0
-	while True:
-		if updateFlag:
-			if ewon:
-				time.sleep()	
+    global updateFlag
+    dt = pd.read_csv('td.csv',usecols=['TimeDifference'])
+    eventCounting = 0
+    while True:
+        if updateFlag:
+            if ewon:
+                a,b,c = dt.iloc[eventCounting,0].split(':')
+                tSleep = int(c)
+                time.sleep(tSleep)    
+                if updateFlag:
+                    print('Delay error')                
+                eventCounting = eventCounting+1
 '''
+def timing():
+    dt = pd.read_csv('td.csv',usecols=['TimeDifference'])
+    for i in range(len(dt)):
+        a,b,c = dt.iloc[i,0].split(':')
+        tSleep = int(c)
+        time.sleep(tSleep+1)
+        if i>=1:
+            print('Error between:', variableNames[i-1],variableNames[i],variableNames[i+1])
 
 def updateValues():
     global updateFlag
@@ -46,7 +59,6 @@ def updateValues():
                 else:
                     data_array = np.vstack((data_array,tagList))
     
-                
                 eventCounter = eventCounter+1
 
 def datafile():
@@ -70,6 +82,8 @@ class SubHandler(object):
             if val == 1:
                 ewon = True
                 print('Ewon Connected \n')
+                thread3 = Thread(target=timing)
+                thread3.start()
                 print('Waiting for the status of pallet \n')
                 print('Press Place Pallet \n')
             else:
@@ -251,3 +265,4 @@ if __name__ == '__main__':
 
     thread2.join()
     thread1.join()
+    thread3.join()
