@@ -1,14 +1,16 @@
+import numpy as np
 def reasons(tags):
+    print(len(tags))
     (smps1,\
     smps2,\
     smps3,\
     plc_power,\
-    vfd_ConnectionStatus,\
+    vfd_Connection,\
     vfd_RunMode,\
     vfd_ConnectionFaulted,\
     vfd_Status,\
     vfd_TorqueDisabled,\
-    vfd_SafetyFault,\
+    vfd_Safety,\
     vfd_ResetRequired,\
     vfd_Command,\
     vfd_SafeTorqueOff,\
@@ -53,14 +55,15 @@ def reasons(tags):
     buzzer,\
     auto,\
     manual,\
-    executeOrder) = tags
+    executeOrder,\
+    extra) = tags
 
     powerSystem = smps1 and smps2 and smps3
 
     fault_reasons = [not smps1,\
     not smps2,\
     not smps3,\
-    not PLC,\
+    not plc_power,\
     not vfd_Power and (not vfd_Connection),\
     not vfd_Power and (not vfd_Safety),\
     not vfd_Power,\
@@ -123,5 +126,5 @@ def reasons(tags):
     'Intermediate Sensor: Device Error',\
     'Intermediate Sensor: Device Warning'])
 
-    print('Faults at: ',faults[fault_reasons])
+    print('Reason for fault: ',faults[fault_reasons])
 
