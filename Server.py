@@ -304,12 +304,15 @@ if __name__ == '__main__':
     server.set_endpoint(url)
 
     node = server.get_objects_node()
-
+	i = 0
     for (n,address,value) in zip(variableNames,nodeAddress,rightValue):
         nodesDict[n] = node.add_variable(address, n , int(value))
         nodesDict[n].set_writable()
-
-    server.start()
+		if i >=23:
+			nodesDict[n].set_value(0)
+		i = i+1
+    
+	server.start()
     print("Server started \n")
     q = True
     while q == True:
