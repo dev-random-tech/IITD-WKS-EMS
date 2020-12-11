@@ -39,4 +39,4 @@ def faults(tags,time_val,moreTags):
         faults = list(map(bool,op)) 
         faults = list(map(not_,faults))
         print('Faults at:',tag_names[faults])    
-		detailed.reason(moreTags)
+        detailed.reasons(moreTags)

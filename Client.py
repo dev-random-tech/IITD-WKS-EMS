@@ -24,11 +24,11 @@ def updateValues():
             updateFlag = False
             if ewon is True:
                 tagList = []
-				detailedList = []
+                detailedList = []
                 for key in nodesDict:
                     tagList.append(nodesDict[key].get_value())
-				for q in detailsDict:
-					detailedList.append(detailsDict[q].get_value())
+                for q in detailsDict:
+                    detailedList.append(detailsDict[q].get_value())
 
                 print('EventNum: ',eventCounter)
                 time_array.append(datetime.now())
@@ -180,7 +180,6 @@ def main():
         url = "opc.tcp://localhost:61032"
         client = Client(url)
         i = 0
-        detailsDict = {}
         for (n,address,value) in zip(variableNames,nodeAddress,rightValue):
             if i >= 23:
                 detailsDict[n]=client.get_node(address)
@@ -223,11 +222,12 @@ if __name__ == '__main__':
     valuesList = []
     timeList = []
     nodesDict = {}
+    detailsDict = {}
     data_array = np.array([])
     time_array = []
 
     try:
-        dataset=pd.read_csv('Nodes.csv')
+        dataset=pd.read_csv('NodesCopy.csv')
         variableNames=dataset.iloc[:,0].values
         rightValue=dataset.iloc[:,1].values
         nodeAddress=dataset.iloc[:,2].values

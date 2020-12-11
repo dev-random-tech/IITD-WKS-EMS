@@ -293,7 +293,7 @@ if __name__ == '__main__':
     exitFlag = 0
     nodesDict = {}
 
-    dataset=pd.read_csv('Nodes.csv')
+    dataset=pd.read_csv('NodesCopy.csv')
     variableNames=dataset.iloc[:,0].values
     nodeList=dataset.iloc[:,0].values
     rightValue=dataset.iloc[:,1].values
@@ -304,15 +304,15 @@ if __name__ == '__main__':
     server.set_endpoint(url)
 
     node = server.get_objects_node()
-	i = 0
+    i = 0
     for (n,address,value) in zip(variableNames,nodeAddress,rightValue):
         nodesDict[n] = node.add_variable(address, n , int(value))
         nodesDict[n].set_writable()
-		if i >=23:
-			nodesDict[n].set_value(0)
-		i = i+1
+        if i >=23:
+            nodesDict[n].set_value(0)
+        i = i+1
     
-	server.start()
+    server.start()
     print("Server started \n")
     q = True
     while q == True:
