@@ -1,4 +1,4 @@
-#%s/\t/\ \ \ \ /gc
+#%s#\t#    #gc
 from opcua import Client
 import time
 from datetime import datetime
@@ -13,17 +13,6 @@ from pandas import to_numeric
 from threading import Thread, Event
 import ErrorCorrection as errorCheck
 
-'''
-def timings():
-	global updateFlag
-	dt = pd.read_csv('td.csv',usecols='TimeDifference')
-	eventCounting = 0
-	while True:
-		if updateFlag:
-			if ewon:
-				time.sleep()	
-'''
-
 def updateValues():
     global updateFlag
     global data_array
@@ -35,11 +24,15 @@ def updateValues():
             updateFlag = False
             if ewon is True:
                 tagList = []
+				detailedList = []
                 for key in nodesDict:
                     tagList.append(nodesDict[key].get_value())
+				for q in detailsDict:
+					detailedList.append(detailsDict[q].get_value())
+
                 print('EventNum: ',eventCounter)
                 time_array.append(datetime.now())
-                errorCheck.faults(tagList,eventCounter)
+                errorCheck.faults(tagList,eventCounter,detailedList)
                 if eventCounter == 0:
                     tag_list = np.array(tagList)
                     data_array = np.append(data_array,tagList,axis=0)
@@ -186,10 +179,14 @@ def main():
         #url = "opc.tcp://10.226.52.227:4994"
         url = "opc.tcp://localhost:61032"
         client = Client(url)
-
+        i = 0
+        detailsDict = {}
         for (n,address,value) in zip(variableNames,nodeAddress,rightValue):
-            nodesDict[n] = client.get_node(address)
-
+            if i >= 23:
+                detailsDict[n]=client.get_node(address)
+            else:
+                nodesDict[n] = client.get_node(address)
+            i = i+1
         #uncomment  when running on actual macine # for ewon
         #nodesDict["powerStatus"] = clientEwon.get_node("ns=4;s=power")
         client.connect()
@@ -199,6 +196,8 @@ def main():
         sub = client.create_subscription(100, SubHandler())
         #h = sub.subscribe_events()
         for item in nodesDict:
+            if item == 'smps1':
+                break
             handle = sub.subscribe_data_change(nodesDict[item])
 
     except ConnectionResetError:
@@ -232,6 +231,7 @@ if __name__ == '__main__':
         variableNames=dataset.iloc[:,0].values
         rightValue=dataset.iloc[:,1].values
         nodeAddress=dataset.iloc[:,2].values
+   
 
     except FileNotFoundError:
         print("File not found")
