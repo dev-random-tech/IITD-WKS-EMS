@@ -38,7 +38,6 @@ def updateValues():
                     data_array = np.append(data_array,tagList,axis=0)
                 else:
                     data_array = np.vstack((data_array,tagList))
-    
                 
                 eventCounter = eventCounter+1
 
@@ -179,13 +178,11 @@ def main():
         #url = "opc.tcp://10.226.52.227:4994"
         url = "opc.tcp://localhost:61032"
         client = Client(url)
-        i = 0
         for (n,address,value) in zip(variableNames,nodeAddress,rightValue):
-            if i >= 23:
-                detailsDict[n]=client.get_node(address)
-            else:
-                nodesDict[n] = client.get_node(address)
-            i = i+1
+            nodesDict[n] = client.get_node(address)
+
+        for (n,address,value)  in zip(varNames,nodeAddr,rightVal):
+            detailsDict[n]=client.get_node(address)
         #uncomment  when running on actual macine # for ewon
         #nodesDict["powerStatus"] = clientEwon.get_node("ns=4;s=power")
         client.connect()
@@ -227,11 +224,14 @@ if __name__ == '__main__':
     time_array = []
 
     try:
-        dataset=pd.read_csv('NodesCopy.csv')
-        variableNames=dataset.iloc[:,0].values
-        rightValue=dataset.iloc[:,1].values
-        nodeAddress=dataset.iloc[:,2].values
-   
+        dataset = pd.read_csv('funcNodes.csv')
+        variableNames = dataset.iloc[:,0].values
+        rightValue = dataset.iloc[:,1].values
+        nodeAddress = dataset.iloc[:,2].values
+        detailed_df = pd.read_csv('stateNodes.csv')
+        varNames = detailed_df.iloc[:,0].values
+        rightVal = detailed_df.iloc[:,1].values
+        nodeAddr = detailed_df.iloc[:,2].values
 
     except FileNotFoundError:
         print("File not found")

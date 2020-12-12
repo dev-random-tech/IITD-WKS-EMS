@@ -292,12 +292,16 @@ if __name__ == '__main__':
     global exitFlag
     exitFlag = 0
     nodesDict = {}
-
-    dataset=pd.read_csv('NodesCopy.csv')
+    detailsDict = {}
+    dataset=pd.read_csv('funcNodes.csv')
     variableNames=dataset.iloc[:,0].values
     nodeList=dataset.iloc[:,0].values
     rightValue=dataset.iloc[:,1].values
     nodeAddress=dataset.iloc[:,2].values
+    detailed_df = pd.read_csv('stateNodes.csv')
+    varNames = detailed_df.iloc[:,0].values
+    rightVal = detailed_df.iloc[:,1].values
+    nodeAddr = detailed_df.iloc[:,2].values
 
     server = Server()
     url = "opc.tcp://localhost:61032"
@@ -308,9 +312,9 @@ if __name__ == '__main__':
     for (n,address,value) in zip(variableNames,nodeAddress,rightValue):
         nodesDict[n] = node.add_variable(address, n , int(value))
         nodesDict[n].set_writable()
-        if i >=23:
-            nodesDict[n].set_value(0)
-        i = i+1
+    for (n,address,value)  in zip(varNames,nodeAddr,rightVal):
+        detailsDict[n]=node.add_variable(address,n,int(value))
+        detailsDict[n].set_writable()
     
     server.start()
     print("Server started \n")
@@ -340,13 +344,17 @@ if __name__ == '__main__':
         askpallet()
 
 else:
-    dataset=pd.read_csv('Nodes.csv')
+    dataset=pd.read_csv('funcNodes.csv')
 
     variableNames=dataset.iloc[:,0].values
     rightValue=dataset.iloc[:,1].values
     nodeAddress=dataset.iloc[:,2].values
     nodesDict = {}
-
+    detailed_df = pd.read_csv('stateNodes.csv')
+    varNames = detailed_df.iloc[:,0].values
+    rightVal = detailed_df.iloc[:,1].values
+    nodeAddr = detailed_df.iloc[:,2].values
+    detailsDict = {}
     server = Server()
     url = "opc.tcp://localhost:61033"
     server.set_endpoint(url)

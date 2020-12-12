@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from operator import and_
 from operator import not_
-import inDetail as detailed
+import inDetail2 as detailed
 ct_df = pd.read_csv('correct_tags.csv')
 
 correct_tags = ct_df.loc[:,"powerStatus":"exit1"].values
@@ -21,6 +21,7 @@ def mul(a,b): #Returns 1 if both values are same
     else:
         return 0
 
+'''
 def mat_mul(mat1,mat2):
     row1,col1 = mat1.shape
     row2,col2 = mat2.shape
@@ -32,6 +33,7 @@ def mat_mul(mat1,mat2):
                 op_mat[i][j] = sum(list(map(mul,mat1[i,:],mat2[:,j])))
 
     return op_mat
+'''
 
 def faults(tags,time_val,moreTags):
     op = list(map(mul,tags,list(correct_tags[time_val,:])))
