@@ -1,17 +1,46 @@
-#%s#\t#    #gc
 from opcua import Client
 import time
-from datetime import datetime
 import csv
 import pandas as pd
 import numpy as np
-from numpy import nan
-import datetime as now
-from numpy import isnan
-from pandas import read_csv
-from pandas import to_numeric
 from threading import Thread, Event
-import ErrorCorrection as errorCheck
+import datetime
+import time
+from operator import and_
+from operator import not_
+
+ct_df = pd.read_csv('correct_tags.csv')
+correct_tags = ct_df.loc[:,"powerStatus":"exit1"].values
+temp = np.asarray(ct_df.columns)
+tag_names = np.delete(temp,0)
+stateTags_df = pd.read_csv('stateNodes.csv')
+varNames = stateTags_df.iloc[:,0].values
+varNames = np.asarray(varNames)
+rightVals = list(stateTags_df.iloc[:,1].values)
+
+def all_check(tag_list):
+    return sum(tag_list)
+
+def mul(a,b): #Returns 1 if both values are same
+    if a == b:
+        return 1
+    else:
+        return 0
+
+def faults(tags,time_val,moreTags):
+    op = list(map(mul,tags,list(correct_tags[time_val,:])))
+    if all_check(op) != len(tags):
+        faults = list(map(bool,op)) 
+        faults = list(map(not_,faults))
+        print('Faults at:',tag_names[faults])    
+        detailed.reasons(moreTags)
+
+
+def reasons(tags):
+    out = list(map(mul,tags,rightVals))
+    faults = list(map(bool,out))
+    faults = list(map(not_,faults))
+    print('Reasons for fault:',varNames[faults])
 
 def updateValues():
     global updateFlag
