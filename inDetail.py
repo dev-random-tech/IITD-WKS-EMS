@@ -1,4 +1,5 @@
 import numpy as np
+
 def reasons(tags):
     print(len(tags))
     (smps1,\
