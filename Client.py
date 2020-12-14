@@ -11,7 +11,31 @@ from numpy import isnan
 from pandas import read_csv
 from pandas import to_numeric
 from threading import Thread, Event
-import ErrorCorrection as errorCheck
+from operator import and_
+from operator import not_
+
+def all_check(tag_list):
+    return sum(tag_list)
+
+def mul(a,b): #Returns 1 if both values are same
+    if a == b:
+        return 1
+    else:
+        return 0
+
+def reasons(tags):
+    out = list(map(mul,tags,rightVals))
+    faults = list(map(bool,out))
+    faults = list(map(not_,faults))
+    print('Reasons for fault:',varNames[faults])
+
+def faults(tags,time_val,moreTags):
+    op = list(map(mul,tags,list(correct_tags[time_val,:])))
+    if all_check(op) != len(tags):
+        faults = list(map(bool,op)) 
+        faults = list(map(not_,faults))
+        print('Faults at:',tag_names[faults])    
+#        reasons(moreTags)
 
 def updateValues():
     global updateFlag
@@ -32,7 +56,7 @@ def updateValues():
 
                 print('EventNum: ',eventCounter)
                 time_array.append(datetime.now())
-                errorCheck.faults(tagList,eventCounter,detailedList)
+                faults(tagList,eventCounter,detailedList)
                 if eventCounter == 0:
                     tag_list = np.array(tagList)
                     data_array = np.append(data_array,tagList,axis=0)
@@ -160,7 +184,7 @@ class SubHandler(object):
             if val == 1:
                 print('Pallet is at exit \n')
                 print('Exit \n')
-                datafile()
+#                datafile()
                 flag = False
 
         '''elif node == nodesDict["numRejected"]:
@@ -232,6 +256,14 @@ if __name__ == '__main__':
         varNames = detailed_df.iloc[:,0].values
         rightVal = detailed_df.iloc[:,1].values
         nodeAddr = detailed_df.iloc[:,2].values
+        ct_df = pd.read_csv('correct_tags.csv')
+        correct_tags = ct_df.loc[:,"powerStatus":"exit1"].values
+        temp = np.asarray(ct_df.columns)
+        tag_names = np.delete(temp,0)
+        stateTags_df = pd.read_csv('stateNodes.csv')
+        varNames = stateTags_df.iloc[:,0].values
+        varNames = np.asarray(varNames)
+        rightVals = list(stateTags_df.iloc[:,1].values)
 
     except FileNotFoundError:
         print("File not found")
