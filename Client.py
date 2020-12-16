@@ -61,7 +61,6 @@ def updateValues():
                 print('EventNum: ', eventCounter)
                 time_array.append(datetime.now())
                 faults(tagList, eventCounter)
-                print(tagList)
                 if eventCounter == 0:
                     tag_list = np.array(tagList)
                     data_array = np.append(data_array, tagList, axis=0)
