@@ -31,8 +31,6 @@ def reasons(nameTags):
     for j in range(len(nameTags)):
         for k in detailsDict.keys():
             if re.search(regex_queries[j],k):
-#                print(detailsDict[k].get_value())
-#                print(rightValDict[k])
                 if rightValDict[k] != detailsDict[k].get_value():
                     print("Reason for Error:",k)
 
@@ -61,14 +59,14 @@ def updateValues():
                     tagList.append(nodesDict[key].get_value())
 
                 print('EventNum: ', eventCounter)
-                #time_array.append(datetime.now())
+                time_array.append(datetime.now())
                 faults(tagList, eventCounter)
-                # print(tagList)
-                #if eventCounter == 0:
-                    #tag_list = np.array(tagList)
-                    #data_array = np.append(data_array, tagList, axis=0)
-                #else:
-                    #data_array = np.vstack((data_array, tagList))
+                print(tagList)
+                if eventCounter == 0:
+                    tag_list = np.array(tagList)
+                    data_array = np.append(data_array, tagList, axis=0)
+                else:
+                    data_array = np.vstack((data_array, tagList))
 
                 eventCounter = eventCounter+1
 
@@ -81,9 +79,6 @@ def datafile():
     df_db['TIMESTAMPS'] = time_array
     filename = 'correct_tags.csv'
     df_db.to_csv(filename, index=False)
-
-# Subscription of events
-
 
 class SubHandler(object):
     def datachange_notification(self, node, val, data):
@@ -194,7 +189,7 @@ class SubHandler(object):
             if val == 1:
                 print('Pallet is at exit \n')
                 print('Exit \n')
-                # datafile()
+#                datafile()
                 flag = False
 
         '''elif node == nodesDict["numRejected"]:
