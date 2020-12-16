@@ -219,9 +219,7 @@ def main():
         for (n, address, value) in zip(varNames, nodeAddr, rightVal):
             detailsDict[n] = client.get_node(address)
             rightValDict[n] = value
-        print(rightValDict)
         # uncomment  when running on actual macine # for ewon
-        #nodesDict["POWERSTATUS"] = clientEwon.get_node("ns=4;s=power")
         client.connect()
         print("Client Connected \n")
         print('Press Connect \n')
