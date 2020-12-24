@@ -71,6 +71,7 @@ def afterScan():
     print('Pallet crossed Intermediate Sensor successfully \n')
     time.sleep(3)
 
+
     nodesDict["OPDIGITALOUTPUT"].set_value(1)
     print('Pallet is at Operational Sensor \n')
 
@@ -315,6 +316,7 @@ if __name__ == '__main__':
     for (n,address,value)  in zip(varNames,nodeAddr,rightVal):
         detailsDict[n]=node.add_variable(address,n,int(value))
         detailsDict[n].set_writable()
+    detailsDict["CONVEYOR1STATUS_vfdResetRequired"].set_value(1)
     
     server.start()
     print("Server started \n")
