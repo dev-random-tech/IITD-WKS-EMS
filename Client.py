@@ -23,6 +23,11 @@ def mul(a,b):  # Returns 1 if both values are same
     else:
         return 0
 
+def common():
+    for k in commonDict.keys():
+        if commonDict[k] != detailsDict[k].get_value():
+           print("Reason for Error:",k) 
+
 def reasons(nameTags):
     regex_queries = []
     for i in nameTags:
@@ -41,6 +46,7 @@ def faults(tags, event_num):
         faults = list(map(bool, op))
         faults = list(map(not_, faults))
         print('Faults at:', tag_names[faults])
+        common()
         reasons(tag_names[faults])
 
 def updateValues():
@@ -213,6 +219,9 @@ def main():
         for (n, address, value) in zip(varNames, nodeAddr, rightVal):
             detailsDict[n] = client.get_node(address)
             rightValDict[n] = value
+
+        for (name,value) in zip(commonNames,commonCorrect):
+            commonDict[name] = value
         # uncomment  when running on actual macine # for ewon
         client.connect()
         print("Client Connected \n")
@@ -251,6 +260,7 @@ if __name__ == '__main__':
     nodesDict = {}
     detailsDict = {}
     rightValDict = {}
+    commonDict = {}
     data_array = np.array([])
     time_array = []
 
@@ -263,6 +273,9 @@ if __name__ == '__main__':
         varNames = detailed_df.iloc[:, 0].values
         rightVal = detailed_df.iloc[:, 1].values
         nodeAddr = detailed_df.iloc[:, 2].values
+        common_df = pd.read_csv('commonNodes.csv')
+        commonNames = common_df.iloc[:,0].values
+        commonCorrect = common_df.iloc[:,1].values
         ct_df = pd.read_csv('correct_tags.csv')
         correct_tags = ct_df.loc[:, "POWERSTATUS":"EXIT1"].values
         #print(correct_tags)
