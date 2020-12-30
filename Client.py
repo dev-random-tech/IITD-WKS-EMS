@@ -8,6 +8,9 @@ import datetime
 import time
 from operator import and_
 from operator import not_
+from operator import and_
+from operator import not_
+import re
 
 ct_df = pd.read_csv('correct_tags.csv')
 correct_tags = ct_df.loc[:,"powerStatus":"exit1"].values
@@ -21,26 +24,37 @@ rightVals = list(stateTags_df.iloc[:,1].values)
 def all_check(tag_list):
     return sum(tag_list)
 
-def mul(a,b): #Returns 1 if both values are same
+def mul(a,b):  # Returns 1 if both values are same
     if a == b:
         return 1
     else:
         return 0
 
-def faults(tags,time_val,moreTags):
-    op = list(map(mul,tags,list(correct_tags[time_val,:])))
+def common():
+    for k in commonDict.keys():
+        if commonDict[k] != detailsDict[k].get_value():
+           print("Reason for Error:",k) 
+
+def reasons(nameTags):
+    regex_queries = []
+    for i in nameTags:
+        string = "^"+i+"_*"
+        regex_queries.append(string)
+    for j in range(len(nameTags)):
+        for k in detailsDict.keys():
+            if re.search(regex_queries[j],k):
+                if rightValDict[k] != detailsDict[k].get_value():
+                    print("Reason for Error:",k)
+
+
+def faults(tags, event_num):
+    op = list(map(mul, tags, list(correct_tags[event_num, :])))
     if all_check(op) != len(tags):
-        faults = list(map(bool,op)) 
-        faults = list(map(not_,faults))
-        print('Faults at:',tag_names[faults])    
-        detailed.reasons(moreTags)
-
-
-def reasons(tags):
-    out = list(map(mul,tags,rightVals))
-    faults = list(map(bool,out))
-    faults = list(map(not_,faults))
-    print('Reasons for fault:',varNames[faults])
+        faults = list(map(bool, op))
+        faults = list(map(not_, faults))
+        print('Faults at:', tag_names[faults])
+        common()
+        reasons(tag_names[faults])
 
 def updateValues():
     global updateFlag
@@ -56,30 +70,28 @@ def updateValues():
                 detailedList = []
                 for key in nodesDict:
                     tagList.append(nodesDict[key].get_value())
-                for q in detailsDict:
-                    detailedList.append(detailsDict[q].get_value())
 
-                print('EventNum: ',eventCounter)
+                print('EventNum: ', eventCounter)
                 time_array.append(datetime.now())
-                errorCheck.faults(tagList,eventCounter,detailedList)
+                faults(tagList, eventCounter)
                 if eventCounter == 0:
                     tag_list = np.array(tagList)
-                    data_array = np.append(data_array,tagList,axis=0)
+                    data_array = np.append(data_array, tagList, axis=0)
                 else:
-                    data_array = np.vstack((data_array,tagList))
-                
+                    data_array = np.vstack((data_array, tagList))
+
                 eventCounter = eventCounter+1
+
 
 def datafile():
     global variableNames
     global data_array
     global time_array
-    df_db = pd.DataFrame(data=data_array,columns=variableNames)
-    df_db['TimeStamps'] = time_array
-    filename = './gg.csv'
-    df_db.to_csv(filename,index=False)
-    
-# Subscription of events
+    df_db = pd.DataFrame(data=data_array, columns=variableNames)
+    df_db['TIMESTAMPS'] = time_array
+    filename = 'correct_tags.csv'
+    df_db.to_csv(filename, index=False)
+
 class SubHandler(object):
     def datachange_notification(self, node, val, data):
         global flag
@@ -87,7 +99,7 @@ class SubHandler(object):
         global updateFlag
         updateFlag = True
 
-        if node == nodesDict["powerStatus"]:
+        if node == nodesDict["POWERSTATUS"]:
             if val == 1:
                 ewon = True
                 print('Ewon Connected \n')
@@ -95,101 +107,101 @@ class SubHandler(object):
                 print('Press Place Pallet \n')
             else:
                 print('Power off')
-        elif node == nodesDict["orderStatus"]:
+        elif node == nodesDict["ORDERSTATUS"]:
             if val == 1:
                 print('Order Status: Order Received \n')
 
-        elif node == nodesDict["scanDone"]:
-            if val == 1 :
+        elif node == nodesDict["SCANDONE"]:
+            if val == 1:
                 print('Inventory Scan Done \n')
 
-        elif node == nodesDict["inventory1"]:
+        elif node == nodesDict["INVENTORY1"]:
             if ewon == True:
                 print('Inventory Present \n')
                 print('Inventory Count: ', val, '\n')
 
-        elif node == nodesDict["stoppingCylinder1up"]:
+        elif node == nodesDict["STOPPINGCYLINDER1UP"]:
             if val == 1:
                 print('Stopper: Up \n')
 
-        elif node == nodesDict["stoppingCylinder1down"]:
+        elif node == nodesDict["STOPPINGCYLINDER1DOWN"]:
             if val == 1 and ewon == True:
                 print('Stopper: Down \n')
 
-        elif node == nodesDict["conveyor1Status"]:
+        elif node == nodesDict["CONVEYOR1STATUS"]:
             if val == 1:
                 print('Conveyor: Started \n')
             elif val == 0 and ewon == True:
                 print('Conveyor: Stopped \n')
 
-        elif node == nodesDict["intDigitalOutput"]:
+        elif node == nodesDict["INTDIGITALOUTPUT"]:
             if val == 1:
                 print('Pallet crossed Intermediate Sensor successfully \n')
 
-        elif node == nodesDict["opDigitalOutput"]:
+        elif node == nodesDict["OPDIGITALOUTPUT"]:
             if val == 1:
                 print('Pallet is at Operational Sensor \n')
 
-        elif node == nodesDict["palletClampingCylinder1Forward"]:
+        elif node == nodesDict["PALLETCLAMPINGCYLINDER1FORWARD"]:
             if val == 1:
                 print('Bottom cylinder: Pallet Clamped \n')
                 print('Clamping cylinder: Pulled out \n')
 
-        elif node == nodesDict["palletClampingCylinder1Back"]:
+        elif node == nodesDict["PALLETCLAMPINGCYLINDER1BACK"]:
             if val == 1 and ewon == True:
                 print('Bottom cylinder: Pallet Unclamped \n')
 
-        elif node == nodesDict["rFIDPosition"]:
+        elif node == nodesDict["RFIDPOSITION"]:
             if val == 1:
-                print ('RFID reader reads RFID tag \n')
+                print('RFID reader reads RFID tag \n')
 
-        elif node == nodesDict["gripper1Open"]:
+        elif node == nodesDict["GRIPPER1OPEN"]:
             if val == 1:
                 print('Gripper picks the valve body from tray \n')
                 print('Valve body placed in the pallet \n')
 
-        elif node == nodesDict["motorCylinder1Forward"]:
+        elif node == nodesDict["MOTORCYLINDER1FORWARD"]:
             if val == 1:
                 print('Motor engages with the pallet \n')
                 print('Lever is pushed down for rotation \n')
                 print('Valve body is rotated by 90 degree \n')
 
-        elif node == nodesDict["motorCylinder1Back"]:
+        elif node == nodesDict["MOTORCYLINDER1BACK"]:
             if val == 1 and ewon == True:
                 print('Motor Stopped \n')
                 print('Lever is pushed up \n')
 
-        elif node == nodesDict["faceOne"]:
+        elif node == nodesDict["FACEONE"]:
             if val == 1:
                 print('Face 1 scanned \n')
 
-        elif node == nodesDict["faceTwo"]:
+        elif node == nodesDict["FACETWO"]:
             if val == 1:
                 print('Face 2 scanned \n')
 
-        elif node == nodesDict["faceThree"]:
+        elif node == nodesDict["FACETHREE"]:
             if val == 1:
                 print('Face 3 scanned \n')
 
-        elif node == nodesDict["faceFour"]:
+        elif node == nodesDict["FACEFOUR"]:
             if val == 1:
                 print('Face 4 scanned \n')
 
-        elif node == nodesDict["numAccepted"]:
+        elif node == nodesDict["NUMACCEPTED"]:
             if val == 1:
                 print('Profile Matched \n')
 
-        elif node == nodesDict["entry1"] :
-            if val == 1 and   ewon == True:
-                print ('Entry Sensor: Pallet Placed \n')
+        elif node == nodesDict["ENTRY1"]:
+            if val == 1 and ewon == True:
+                print('Entry Sensor: Pallet Placed \n')
                 print('Waiting for the order \n')
                 print('Press Place Order \n')
 
-        elif node == nodesDict["exit1"]:
+        elif node == nodesDict["EXIT1"]:
             if val == 1:
                 print('Pallet is at exit \n')
                 print('Exit \n')
-                datafile()
+#                datafile()
                 flag = False
 
         '''elif node == nodesDict["numRejected"]:
@@ -197,23 +209,27 @@ class SubHandler(object):
                 print('Profile Not Matched \n')
                 print('Profile Rejected \n')'''
 
+
 def main():
     try:
         #powerUrl = "opc.tcp://10.226.52.200:4840"
         #clientEwon = Client(powerUrl)
         #powerEwon = clientEwon.get_node("ns=4;s=power")
 
-        #machine1 url uncomment it
+        # machine1 url uncomment it
         #url = "opc.tcp://10.226.52.227:4994"
-        url = "opc.tcp://localhost:61032"
+        url = "opc.tcp://localhost:61033"
         client = Client(url)
-        for (n,address,value) in zip(variableNames,nodeAddress,rightValue):
+        for (n, address, value) in zip(variableNames, nodeAddress, rightValue):
             nodesDict[n] = client.get_node(address)
 
-        for (n,address,value)  in zip(varNames,nodeAddr,rightVal):
-            detailsDict[n]=client.get_node(address)
-        #uncomment  when running on actual macine # for ewon
-        #nodesDict["powerStatus"] = clientEwon.get_node("ns=4;s=power")
+        for (n, address, value) in zip(varNames, nodeAddr, rightVal):
+            detailsDict[n] = client.get_node(address)
+            rightValDict[n] = value
+
+        for (name,value) in zip(commonNames,commonCorrect):
+            commonDict[name] = value
+        # uncomment  when running on actual macine # for ewon
         client.connect()
         print("Client Connected \n")
         print('Press Connect \n')
@@ -234,11 +250,12 @@ def main():
     except Exception as ex:
         template = "An exception of type {0} occurred. Arguments:\n{1!r}"
         message = template.format(type(ex).__name__, ex.args)
-        print (message)
-    #finally:
-        #print("")
-        #sub.unsubscribe(handle)
-        #client.disconnect
+        print(message)
+    # finally:
+        # print("")
+        # sub.unsubscribe(handle)
+        # client.disconnect
+
 
 if __name__ == '__main__':
 
@@ -249,18 +266,34 @@ if __name__ == '__main__':
     timeList = []
     nodesDict = {}
     detailsDict = {}
+    rightValDict = {}
+    commonDict = {}
     data_array = np.array([])
     time_array = []
 
     try:
         dataset = pd.read_csv('funcNodes.csv')
-        variableNames = dataset.iloc[:,0].values
-        rightValue = dataset.iloc[:,1].values
-        nodeAddress = dataset.iloc[:,2].values
+        variableNames = dataset.iloc[:, 0].values
+        rightValue = dataset.iloc[:, 1].values
+        nodeAddress = dataset.iloc[:, 2].values
         detailed_df = pd.read_csv('stateNodes.csv')
-        varNames = detailed_df.iloc[:,0].values
-        rightVal = detailed_df.iloc[:,1].values
-        nodeAddr = detailed_df.iloc[:,2].values
+        varNames = detailed_df.iloc[:, 0].values
+        rightVal = detailed_df.iloc[:, 1].values
+        nodeAddr = detailed_df.iloc[:, 2].values
+        common_df = pd.read_csv('commonNodes.csv')
+        commonNames = common_df.iloc[:,0].values
+        commonCorrect = common_df.iloc[:,1].values
+        ct_df = pd.read_csv('correct_tags.csv')
+        correct_tags = ct_df.loc[:, "POWERSTATUS":"EXIT1"].values
+        #print(correct_tags)
+        temp = np.asarray(ct_df.columns)
+        #print(temp)
+        tag_names = np.delete(temp, -1)
+        #print(tag_names)
+        stateTags_df = pd.read_csv('stateNodes.csv')
+        varNames = stateTags_df.iloc[:, 0].values
+        varNames = np.asarray(varNames)
+        rightVals = list(stateTags_df.iloc[:, 1].values)
 
     except FileNotFoundError:
         print("File not found")
@@ -270,7 +303,6 @@ if __name__ == '__main__':
 
     except:
         print("Unexpected error while reading the file")
-
 
     thread2 = Thread(target=main)
     thread2.start()

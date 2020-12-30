@@ -1,12 +1,4 @@
-Variable Name,RIGHT VALUE,Node Address,Old Names
-CONVEYOR1STATUS_vfdConnectionStatus,1,ns=3;s=::[PLC]vfd:SI.ConnectionStatus,vfdConnectionStatus
-CONVEYOR1STATUS_vfdStatus,0,ns=3;s=::[PLC]vfd:SI.Status,vfdStatus
-CONVEYOR1STATUS_vfdTorqueDisabled,0,ns=3;s=::[PLC]vfd:SI.TorqueDisabled,vfdTorqueDisabled
-CONVEYOR1STATUS_vfdSafetyFault,0,ns=3;s=::[PLC]vfd:SI.SafetyFault,vfdSafetyFault
-CONVEYOR1STATUS_vfdResetRequired,0,ns=3;s=::[PLC]vfd:SI.ResetRequired,vfdResetRequired
-CONVEYOR1STATUS_vfdCommand,0,ns=3;s=::[PLC]vfd:SO.Command,vfdCommand
-CONVEYOR1STATUS_vfdSafeTorqueOff,0,ns=3;s=::[PLC]vfd:SO.SafetorqueOff,vfdSafeTorqueOff
-CONVEYOR1STATUS_vfdReset,0,ns=3;s=::[PLC]vfd:SO.Reset,vfdReset
+﻿Variable Name,RIGHT VALUE,Node Address,Old Names
 ioMod1Link1,0,ns=3;s=::[PLC]iolinkblock1:I1.Data[4].0,ioMod1Link1
 ioMod1Link2,0,ns=3;s=::[PLC]iolinkblock1:I1.Data[4].1,ioMod1Link2
 ioMod1Link3,0,ns=3;s=::[PLC]iolinkblock1:I1.Data[4].2,ioMod1Link3
@@ -16,30 +8,6 @@ ioMod1Link6,0,ns=3;s=::[PLC]iolinkblock1:I1.Data[4].5,ioMod1Link6
 ioMod2Link1,0,ns=3;s=::[PLC]iolinkblock1:I1.Data[5].0,ioMod2Link1
 ioMod2Link2,0,ns=3;s=::[PLC]iolinkblock1:I1.Data[5].1,ioMod2Link2
 ioMod2Link3,0,ns=3;s=::[PLC]iolinkblock1:I1.Data[5].2,ioMod2Link3
-ENTRY1_DataModeIO,1,ns=3;s=::[PLC]iolinkblock1:I1.Data[2].4,entDataModeIO
-ENTRY1_DataValidity,0,ns=3;s=::[PLC]iolinkblock1:I1.Data[3].4,entDataValidity
-ENTRY1_PowerSupply,1,ns=3;s=::[PLC]iolinkblock1:I1.Data[6].4,entPowerSupply
-ENTRY1_IODeviceError,0,ns=3;s=::[PLC]iolinkblock1:I1.Data[10].4,entIODeviceError
-ENTRY1_IODeviceWarning,0,ns=3;s=::[PLC]iolinkblock1:I1.Data[11].4,entIODeviceWarning
-ENTRY1_IODeviceNotification,0,ns=3;s=::[PLC]iolinkblock1:I1.Data[12].4,entIODeviceNotification
-INTDIGITALOUTPUT_DataModeIO,1,ns=3;s=::[PLC]iolinkblock1:I1.Data[2].3,intDataModeIO
-INTDIGITALOUTPUT_DataValidity,0,ns=3;s=::[PLC]iolinkblock1:I1.Data[3].3,intDataValidity
-INTDIGITALOUTPUT_PowerSupply,1,ns=3;s=::[PLC]iolinkblock1:I1.Data[6].3,intPowerSupply
-INTDIGITALOUTPUT_IODeviceError,0,ns=3;s=::[PLC]iolinkblock1:I1.Data[10].3,intIODeviceError
-INTDIGITALOUTPUT_IODeviceWarning,0,ns=3;s=::[PLC]iolinkblock1:I1.Data[11].3,intIODeviceWarning
-INTDIGITALOUTPUT_IODeviceNotification,0,ns=3;s=::[PLC]iolinkblock1:I1.Data[12].3,intIODeviceNotification
-OPDIGITALOUTPUT_DataModeIO,1,ns=3;s=::[PLC]iolinkblock1:I1.Data[2].2,opDataModeIO
-OPDIGITALOUTPUT_DataValidity,0,ns=3;s=::[PLC]iolinkblock1:I1.Data[3].2,opDataValidity
-OPDIGITALOUTPUT_PowerSupply,1,ns=3;s=::[PLC]iolinkblock1:I1.Data[6].2,opPowerSupply
-OPDIGITALOUTPUT_IODeviceError,0,ns=3;s=::[PLC]iolinkblock1:I1.Data[10].2,opIODeviceError
-OPDIGITALOUTPUT_IODeviceWarning,0,ns=3;s=::[PLC]iolinkblock1:I1.Data[11].2,opIODeviceWarning
-OPDIGITALOUTPUT_IODeviceNotification,0,ns=3;s=::[PLC]iolinkblock1:I1.Data[12].2,opIODeviceNotification
-EXIT1_DataModeIO,1,ns=3;s=::[PLC]iolinkblock1:I1.Data[2].1,extDataModeIO
-EXIT1_DataValidity,0,ns=3;s=::[PLC]iolinkblock1:I1.Data[3].1,extDataValidity
-EXIT1_PowerSupply,1,ns=3;s=::[PLC]iolinkblock1:I1.Data[6].1,extPowerSupply
-EXIT1_IODeviceError,0,ns=3;s=::[PLC]iolinkblock1:I1.Data[10].1,extIODeviceError
-EXIT1_IODeviceWarning,0,ns=3;s=::[PLC]iolinkblock1:I1.Data[11].1,extIODeviceWarning
-EXIT1_IODeviceNotification,0,ns=3;s=::[PLC]iolinkblock1:I1.Data[12].1,extIODeviceNotification
 auto,0,ns=3;s=::[PLC]Machine_Running_In_Auto,auto
 manual,0,ns=3;s=::[PLC]mode_manual,manual
 lightCurtain1,0,ns=3;s=[PLC]Light_Curtain,lightCurtain1
@@ -82,9 +50,6 @@ buzzer1,0,ns=3;s=::[PLC]aentr:5:I.5,buzzer1
 imageOK1,0,ns=3;s=::[PLC]aentr:3:I.2,imageOK1
 machine1StartSequenceFivetwo,0,ns=3;s=[PLC]HMI_Cmd_Execute_Order,machine1StartSequenceFivetwo
 emergencyReason,0,ns=3;s=[PLC]Emergency_Reason,emergencyReason
-POWERSTATUS_smps1,1,ns=3;s=power_on,smps1
-POWERSTATUS_smps2,1,ns=3;s=::[PLC]aentr:2:I.6,smps2
-POWERSTATUS_smps3,1,ns=3;s=::[PLC]aentr:2:I.7,smps3
 palletShaftDown,0,ns=3;s=::[PLC]PalletShaftDown,palletShaftDown
 bodyClampingForward,0,ns=3;s=::[PLC]BodyClamping_Forward,bodyClampingForward
 bodyClampingBack,0,ns=3;s=::[PLC]BodyClamping_Back,bodyClampingBack

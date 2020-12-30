@@ -4,13 +4,13 @@ from random import randint
 import pandas as pd
 
 def power():
-    nodesDict["powerStatus"].set_value(1)
+    nodesDict["POWERSTATUS"].set_value(1)
     print("Ewon Connected \n")
     print("Press Place Pallet \n")
 
 def pallet():
-    if (nodesDict["powerStatus"].get_value()) == 1:
-        nodesDict["entry1"].set_value(1)
+    if (nodesDict["POWERSTATUS"].get_value()) == 1:
+        nodesDict["ENTRY1"].set_value(1)
         print ('Entry Sensor: Pallet Placed \n')
         print("Press Place Order \n")
     else:
@@ -19,9 +19,9 @@ def pallet():
 
 def order():
     global scan
-    if (nodesDict["powerStatus"].get_value()) == 1:
-        if (nodesDict["entry1"].get_value()) == 1:
-            nodesDict["orderStatus"].set_value(1)
+    if (nodesDict["POWERSTATUS"].get_value()) == 1:
+        if (nodesDict["ENTRY1"].get_value()) == 1:
+            nodesDict["ORDERSTATUS"].set_value(1)
             print("Order Received \n")
             scanInventory()
             '''if nodesDict["inventoryScanOne"] == 1:
@@ -40,12 +40,12 @@ def order():
 def scanInventory():
     print('Scanning Inventory \n')
     time.sleep(3)
-    nodesDict["scanDone"].set_value(1)
+    nodesDict["SCANDONE"].set_value(1)
     print('Inventory Scanned \n')
     time.sleep(1)
     print ('Inventory Present \n')
     inventory = 6#randint(1,5)
-    nodesDict["inventory1"].set_value(inventory)
+    nodesDict["INVENTORY1"].set_value(inventory)
     print ('Inventory Count: ', inventory, '\n')
     time.sleep(2)
     afterScan()
@@ -53,12 +53,12 @@ def scanInventory():
 def afterScan():
 
     # Stopper will be in the up position
-    nodesDict["stoppingCylinder1up"].set_value(1)
+    nodesDict["STOPPINGCYLINDER1UP"].set_value(1)
     print('Stopper: Up \n')
 
     # Conveyor gets started
-    nodesDict["conveyor1Status"].set_value(1)
-    nodesDict["entry1"].set_value(0)
+    nodesDict["CONVEYOR1STATUS"].set_value(1)
+    nodesDict["ENTRY1"].set_value(0)
     print('Conveyor: Started \n')
     time.sleep(4)
     # Pallet will be moving towards operational sensor
@@ -67,15 +67,16 @@ def afterScan():
     # All these are proximity sensors
 
     # Intermediate sensor checks pallet is moving or not
-    nodesDict["intDigitalOutput"].set_value(1)
+    nodesDict["INTDIGITALOUTPUT"].set_value(1)
     print('Pallet crossed Intermediate Sensor successfully \n')
     time.sleep(3)
 
-    nodesDict["opDigitalOutput"].set_value(1)
+
+    nodesDict["OPDIGITALOUTPUT"].set_value(1)
     print('Pallet is at Operational Sensor \n')
 
     # Once pallet reaches operational sensor, conveyor stops.
-    nodesDict["conveyor1Status"].set_value(0)
+    nodesDict["CONVEYOR1STATUS"].set_value(0)
     print ('Conveyor: Stopped \n')
     time.sleep(2)
 
@@ -87,13 +88,13 @@ def afterScan():
     # it is matching with the profile of the predefined body or not
 
     # Bottom cylinder will be clamped
-    nodesDict["palletClampingCylinder1Forward"].set_value(1)
+    nodesDict["PALLETCLAMPINGCYLINDER1FORWARD"].set_value(1)
     print('Bottom cylinder: Pallet clamped \n')
     print('Clamping cylinder: Pulled out \n')
     time.sleep(3)
 
     # RFID tag will be read by RFID tag reader
-    nodesDict["rFIDPosition"].set_value(1)
+    nodesDict["RFIDPOSITION"].set_value(1)
     print ('RFID reader reads RFID tag \n')
     time.sleep(3)
 
@@ -103,7 +104,7 @@ def operation():
     global exitFlag
     # Once it is read that the body is 5 by 2 or 3 by 2,
     # accordingly gripper will pick the particular valve body from tray and place it in the pallet.
-    nodesDict["gripper1Open"].set_value(1)
+    nodesDict["GRIPPER1OPEN"].set_value(1)
     print('Gripper picks the valve body from tray \n')
     print('Valve body placed in the pallet \n')
     time.sleep(6)
@@ -112,7 +113,7 @@ def operation():
     # Gripper is adjusted to align the vision sensor to the valve body
 
     # Motor engages with the pallet
-    nodesDict["motorCylinder1Forward"].set_value(1)
+    nodesDict["MOTORCYLINDER1FORWARD"].set_value(1)
     print('Motor engages with the pallet \n')
     print('Lever is pushed down for rotation \n')
     time.sleep(2)
@@ -123,28 +124,28 @@ def operation():
     #Profile is captured
     print('Face 1 is being scanned \n')
     time.sleep(3)
-    nodesDict["faceOne"].set_value(1)
+    nodesDict["FACEONE"].set_value(1)
 
     print('Face 2 is being scanned \n')
     time.sleep(3)
-    nodesDict["faceTwo"].set_value(1)
+    nodesDict["FACETWO"].set_value(1)
 
     print('Face 3 is being scanned \n')
     time.sleep(3)
-    nodesDict["faceThree"].set_value(1)
+    nodesDict["FACETHREE"].set_value(1)
 
     print('Face 4 is being scanned \n')
     time.sleep(3)
-    nodesDict["faceFour"].set_value(1)
+    nodesDict["FACEFOUR"].set_value(1)
 
     k = True
     while k == True:
 
-        nodesDict["numAccepted"].set_value(1)
+        nodesDict["NUMACCEPTED"].set_value(1)
         time.sleep(3)
 
         #Once profile is correct, pallet will be disengaged from the operational sensor area and exit
-        if nodesDict["numAccepted"].get_value() == 1:
+        if nodesDict["NUMACCEPTED"].get_value() == 1:
 
             print('Profile Matched \n')
             time.sleep(1)
@@ -152,64 +153,64 @@ def operation():
             print('Product Accepted \n')
             time.sleep(1)
 
-            nodesDict["motorCylinder1Back"].set_value(1)
+            nodesDict["MOTORCYLINDER1BACK"].set_value(1)
             print('Motor Stopped \n')
             print('Lever is pushed up \n')
             time.sleep(2)
 
-            nodesDict["stoppingCylinder1down"].set_value(1)
+            nodesDict["STOPPINGCYLINDER1DOWN"].set_value(1)
             print('Stopper: Down \n')
             time.sleep(2)
 
-            nodesDict["palletClampingCylinder1Back"].set_value(1)
+            nodesDict["PALLETCLAMPINGCYLINDER1BACK"].set_value(1)
             print('Bottom Cylinder: Pallet Unclamped \n')
             time.sleep(2)
 
-            nodesDict["conveyor1Status"].set_value(1)
+            nodesDict["CONVEYOR1STATUS"].set_value(1)
             print('Conveyor: Started \n')
             time.sleep(2)
 
-            nodesDict["conveyor1Status"].set_value(0)
+            nodesDict["CONVEYOR1STATUS"].set_value(0)
             print('Conveyor: Stopped \n')
             time.sleep(2)
 
-            nodesDict["exit1"].set_value(1)
+            nodesDict["EXIT1"].set_value(1)
             print('Pallet is at exit \n')
             print('Exit \n')
             exitFlag =1
             time.sleep(3)
 
-            nodesDict["scanDone"].set_value(0)
+            nodesDict["SCANDONE"].set_value(0)
 
-            nodesDict["rFIDPosition"].set_value(0)
+            nodesDict["RFIDPOSITION"].set_value(0)
 
-            nodesDict["intDigitalOutput"].set_value(0)
+            nodesDict["INTDIGITALOUTPUT"].set_value(0)
 
-            nodesDict["opDigitalOutput"].set_value(0)
+            nodesDict["OPDIGITALOUTPUT"].set_value(0)
 
-            nodesDict["gripper1Open"].set_value(0)
-            nodesDict["motorCylinder1Back"].set_value(0)
+            nodesDict["GRIPPER1OPEN"].set_value(0)
+            nodesDict["MOTORCYLINDER1BACK"].set_value(0)
 
 
-            nodesDict["stoppingCylinder1down"].set_value(0)
+            nodesDict["STOPPINGCYLINDER1DOWN"].set_value(0)
 
-            nodesDict["palletClampingCylinder1Back"].set_value(0)
+            nodesDict["PALLETCLAMPINGCYLINDER1BACK"].set_value(0)
 
-            nodesDict["motorCylinder1Forward"].set_value(0)
+            nodesDict["MOTORCYLINDER1FORWARD"].set_value(0)
 
-            nodesDict["orderStatus"].set_value(0)
+            nodesDict["ORDERSTATUS"].set_value(0)
 
-            nodesDict["faceOne"].set_value(0)
+            nodesDict["FACEONE"].set_value(0)
 
-            nodesDict["faceTwo"].set_value(0)
+            nodesDict["FACETWO"].set_value(0)
 
-            nodesDict["faceThree"].set_value(0)
+            nodesDict["FACETHREE"].set_value(0)
 
-            nodesDict["faceFour"].set_value(0)
+            nodesDict["FACEFOUR"].set_value(0)
 
-            nodesDict["numAccepted"].set_value(0)
+            nodesDict["NUMACCEPTED"].set_value(0)
 
-            nodesDict["exit1"].set_value(0)
+            nodesDict["EXIT1"].set_value(0)
 
             #nodesDict["numRejected"].set_value(0)
 
@@ -226,21 +227,21 @@ def operation():
             time.sleep(2)
             print('Product Rejected \n')
             time.sleep(2)
-            nodesDict["gripper1Open"].set_value(0)
+            nodesDict["GRIPPER1OPEN"].set_value(0)
             print("Gripper places the valve body on rejection tray \n")
             time.sleep(2)
 
-            nodesDict["motorCylinder1Back"].set_value(0)
+            nodesDict["MOTORCYLINDER1BACK"].set_value(0)
 
-            nodesDict["faceOne"].set_value(0)
+            nodesDict["FACEONE"].set_value(0)
 
-            nodesDict["faceTwo"].set_value(0)
-            nodesDict["faceThree"].set_value(0)
-            nodesDict["faceFour"].set_value(0)
+            nodesDict["FACETWO"].set_value(0)
+            nodesDict["FACETHREE"].set_value(0)
+            nodesDict["FACEFOUR"].set_value(0)
 
-            nodesDict["numAccepted"].set_value(0)
+            nodesDict["NUMACCEPTED"].set_value(0)
 
-            nodesDict["exit1"].set_value(0)
+            nodesDict["EXIT1"].set_value(0)
 
             nodesDict["numRejected"].set_value(0)
 
@@ -256,14 +257,14 @@ def askpallet():
         p = input("Pallet Placed (yes/no): ")
         if (p.lower()=='yes'):
             k= False
-            nodesDict["entry1"].set_value(1)
+            nodesDict["ENTRY1"].set_value(1)
             print ('Entry Sensor: Pallet Placed \n')
             time.sleep(3)
             l = True
             while l == True:
                 o = input("Place order (yes/no): ")
                 if o.lower() =='yes':
-                    nodesDict["orderStatus"].set_value(1)
+                    nodesDict["ORDERSTATUS"].set_value(1)
 
                     print("Order Received \n")
                     #if nodesDict["inventoryScanOne"]:
@@ -271,13 +272,13 @@ def askpallet():
                     break
 
                 elif o.lower() =='no':
-                    nodesDict["orderStatus"].set_value(0)
+                    nodesDict["ORDERSTATUS"].set_value(0)
                     l = True
                 else:
                     print("Only 'yes' or 'no' are allowed as input \n")
                     l= True
         elif p.lower() =='no':
-            nodesDict["entry1"].set_value(0)
+            nodesDict["ENTRY1"].set_value(0)
             k = True
         else:
             print("Only 'yes' or 'no' are allowed as input \n")
@@ -304,7 +305,7 @@ if __name__ == '__main__':
     nodeAddr = detailed_df.iloc[:,2].values
 
     server = Server()
-    url = "opc.tcp://localhost:61032"
+    url = "opc.tcp://localhost:61033"
     server.set_endpoint(url)
 
     node = server.get_objects_node()
@@ -315,6 +316,7 @@ if __name__ == '__main__':
     for (n,address,value)  in zip(varNames,nodeAddr,rightVal):
         detailsDict[n]=node.add_variable(address,n,int(value))
         detailsDict[n].set_writable()
+    detailsDict["CONVEYOR1STATUS_vfdResetRequired"].set_value(1)
     
     server.start()
     print("Server started \n")
@@ -324,15 +326,15 @@ if __name__ == '__main__':
         v = input("Ewon (on/off): ")
         if (v.lower()=='on'):
             ewon= True
-            nodesDict["powerStatus"].set_value(1)
+            nodesDict["POWERSTATUS"].set_value(1)
             print('Ewon Connected: ', ewon , '\n')
-            print(nodesDict["powerStatus"].get_value())
+            print(nodesDict["POWERSTATUS"].get_value())
             q = False
             time.sleep(3)
             askpallet()
         elif v.lower() =='off':
             ewon= False
-            nodesDict["powerStatus"].set_value(0)
+            nodesDict["POWERSTATUS"].set_value(0)
             print('Ewon Connected: ', ewon )
             print("\n")
             q = True
