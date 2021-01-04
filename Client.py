@@ -4,14 +4,14 @@ import csv
 import pandas as pd
 import numpy as np
 from threading import Thread, Event
-import datetime
+from datetime import datetime
 import time
 from operator import and_
 from operator import not_
 import re
 
 ct_df = pd.read_csv('correct_tags.csv')
-correct_tags = ct_df.loc[:,"powerStatus":"exit1"].values
+correct_tags = ct_df.loc[:,"POWERSTATUS":"EXIT1"].values
 temp = np.asarray(ct_df.columns)
 tag_names = np.delete(temp,0)
 stateTags_df = pd.read_csv('stateNodes.csv')
@@ -44,7 +44,7 @@ def reasons(nameTags):
                 if rightValDict[k] != detailsDict[k].get_value():
                     print("Reason for Error:",k)
 
-
+                
 def faults(tags, event_num):
     op = list(map(mul, tags, list(correct_tags[event_num, :])))
     if all_check(op) != len(tags):
