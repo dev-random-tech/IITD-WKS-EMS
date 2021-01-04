@@ -8,8 +8,6 @@ import datetime
 import time
 from operator import and_
 from operator import not_
-from operator import and_
-from operator import not_
 import re
 
 ct_df = pd.read_csv('correct_tags.csv')
