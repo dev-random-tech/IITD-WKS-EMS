@@ -19,6 +19,17 @@ varNames = stateTags_df.iloc[:,0].values
 varNames = np.asarray(varNames)
 rightVals = list(stateTags_df.iloc[:,1].values)
 
+def rectification():
+    print('Please check the voltage at the port\n')
+    prompt = input('Is the voltage at correct value?:(yes/no)')
+    if prompt.lower() == 'yes':
+        print('Replace the sensor')
+    if prompt.lower() == 'no':
+        print('Change the port and try again\n')
+        prompt2 = input('Is there an error in sensor readings:') 
+        if prompt2.lower() ==  'yes':
+            print('Replace the sensor')
+ 
 def all_check(tag_list):
     return sum(tag_list)
 
@@ -43,7 +54,7 @@ def reasons(nameTags):
             if re.search(regex_queries[j],k):
                 if rightValDict[k] != detailsDict[k].get_value():
                     print("Reason for Error:",k)
-
+                    rectification()
                 
 def faults(tags, event_num):
     op = list(map(mul, tags, list(correct_tags[event_num, :])))
