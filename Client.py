@@ -10,6 +10,31 @@ from operator import and_
 from operator import not_
 import re
 
+class Job(threading.Thread):
+
+    def __init__(self, *args, **kwargs):
+        super(Job, self).__init__(*args, **kwargs)
+        self.__flag = threading.Event() # The flag used to pause the thread
+        self.__flag.set() # Set to True
+        self.__running = threading.Event() # Used to stop the thread identification
+        self.__running.set() # Set running to True
+
+    def run(self):
+        while self.__running.isSet():
+            self.__flag.wait() # return immediately when it is True, block until the internal flag is True when it is False
+            print time.time()
+            time.sleep(1)
+
+    def pause(self):
+        self.__flag.clear() # Set to False to block the thread
+
+    def resume(self):
+        self.__flag.set() # Set to True, let the thread stop blocking
+
+    def stop(self):
+        self.__flag.set() # Resume the thread from the suspended state, if it is already suspended
+        self.__running.clear() # Set to False
+
 ct_df = pd.read_csv('correct_tags.csv')
 correct_tags = ct_df.loc[:,"POWERSTATUS":"EXIT1"].values
 temp = np.asarray(ct_df.columns)
@@ -57,6 +82,8 @@ def reasons(nameTags):
                     rectification()
                 
 def faults(tags, event_num):
+    global rectificationFlag
+    rectificationFlag = True
     op = list(map(mul, tags, list(correct_tags[event_num, :])))
     if all_check(op) != len(tags):
         faults = list(map(bool, op))
@@ -67,6 +94,7 @@ def faults(tags, event_num):
 
 def updateValues():
     global updateFlag
+    global rectificationFlag
     global data_array
     global time_array
     updateFlag = False
@@ -107,6 +135,7 @@ class SubHandler(object):
         global ewon
         global updateFlag
         updateFlag = True
+        global rectificationFlag
 
         if node == nodesDict["POWERSTATUS"]:
             if val == 1:
@@ -313,11 +342,17 @@ if __name__ == '__main__':
     except:
         print("Unexpected error while reading the file")
 
-    thread2 = Thread(target=main)
+    thread2 = Job(target=main)
     thread2.start()
 
     thread1 = Thread(target=updateValues)
     thread1.start()
+
+    if rectificationFlag:
+        thread2.pause()
+    else:
+        thread2.resume()
+
 
     thread2.join()
     thread1.join()
