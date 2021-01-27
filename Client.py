@@ -9,31 +9,7 @@ import time
 from operator import and_
 from operator import not_
 import re
-
-class Job(threading.Thread):
-
-    def __init__(self, *args, **kwargs):
-        super(Job, self).__init__(*args, **kwargs)
-        self.__flag = threading.Event() # The flag used to pause the thread
-        self.__flag.set() # Set to True
-        self.__running = threading.Event() # Used to stop the thread identification
-        self.__running.set() # Set running to True
-
-    def run(self):
-        while self.__running.isSet():
-            self.__flag.wait() # return immediately when it is True, block until the internal flag is True when it is False
-            print time.time()
-            time.sleep(1)
-
-    def pause(self):
-        self.__flag.clear() # Set to False to block the thread
-
-    def resume(self):
-        self.__flag.set() # Set to True, let the thread stop blocking
-
-    def stop(self):
-        self.__flag.set() # Resume the thread from the suspended state, if it is already suspended
-        self.__running.clear() # Set to False
+from readFileRegex import *
 
 ct_df = pd.read_csv('correct_tags.csv')
 correct_tags = ct_df.loc[:,"POWERSTATUS":"EXIT1"].values
@@ -44,7 +20,25 @@ varNames = stateTags_df.iloc[:,0].values
 varNames = np.asarray(varNames)
 rightVals = list(stateTags_df.iloc[:,1].values)
 
-def rectification():
+def rectification():#will pass custom rectification on basis of errorNode
+    f = open("sensor use case.net",'r')
+    lines = f.readlines()
+    mystr = ' '.join([line.strip() for line in lines])
+    allNodes = readNodes(mystr)
+    inv_Nodes = {a:b for b,a in allNodes.items()}
+    allConnections = readConnections(mystr,allNodes.keys())
+    newConnections = {}
+    for y in allConnections:
+        newConnections[y['component']] = y['connections']
+    node = 'IO_Link'
+    print("Please check these following connections for power")
+    nodeType = 'power'
+    searchConnections(inv_Nodes[node],nodeType,newConnections)
+    print("Please check these following connections for port")
+    nodeType = 'Port'
+    searchConnections(inv_Nodes[node],nodeType,newConnections)
+
+
     print('Please check the voltage at the port\n')
     prompt = input('Is the voltage at correct value?:(yes/no)')
     if prompt.lower() == 'yes':
@@ -79,11 +73,11 @@ def reasons(nameTags):
             if re.search(regex_queries[j],k):
                 if rightValDict[k] != detailsDict[k].get_value():
                     print("Reason for Error:",k)
-                    rectification()
+                    rectification(k)
                 
 def faults(tags, event_num):
     global rectificationFlag
-    rectificationFlag = True
+    rectificationFlag = False
     op = list(map(mul, tags, list(correct_tags[event_num, :])))
     if all_check(op) != len(tags):
         faults = list(map(bool, op))
@@ -125,6 +119,14 @@ def datafile():
     global data_array
     global time_array
     df_db = pd.DataFrame(data=data_array, columns=variableNames)
+    df_db['TIMESTAMPS'] = time_array
+    filename = 'correct_tags.csv'
+    df_db.to_csv(filename, index=False)
+
+class SubHandler(object):
+    def datachange_notification(self, node, val, data):
+        global flag
+        global ewon
     df_db['TIMESTAMPS'] = time_array
     filename = 'correct_tags.csv'
     df_db.to_csv(filename, index=False)
@@ -342,17 +344,12 @@ if __name__ == '__main__':
     except:
         print("Unexpected error while reading the file")
 
-    thread2 = Job(target=main)
+    thread2 = Thread(target=main)
     thread2.start()
 
     thread1 = Thread(target=updateValues)
     thread1.start()
 
-    if rectificationFlag:
-        thread2.pause()
-    else:
-        thread2.resume()
-
-
     thread2.join()
     thread1.join()
+

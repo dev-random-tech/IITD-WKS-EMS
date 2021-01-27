@@ -1,0 +1,168 @@
+status of io-link communication
+port 1-4 and 5-8
+Status of IO-Link process data validity
+Status of module diagnostics - 1
+Low voltage system-sensor power supply
+Low voltage AUX power supply
+Sensor short circuit
+Actuator short circuit - channel A
+Actuator short circuit - channel B
+IO-Link validation error
+Force mode active
+Status of module diagnostics - 2
+IO-Link device error
+IO-Link device warning
+IO-Link device notification
+Status of sensor power supply(Us pin 1) diagnostics, ports 1 - 8
+Sensor short circuit - X1(Us pin 1)
+Sensor short circuit - X2(Us pin 1)
+ 
+Sensor short circuit - X3(Us pin 1)
+
+Sensor short circuit - X4(Us pin 1)
+
+Sensor short circuit - X5(Us pin 1)
+
+Sensor short circuit - X6(Us pin 1)
+
+Sensor short circuit - X7(Us pin 1)
+
+Sensor short circuit - X8(Us pin 1)
+Status of digital output diagnostics for channels X1A - X8A
+Channel error - X1A(pin 4)
+
+Channel error - X2A(pin 4)
+
+Channel error - X3A(pin 4)
+
+Channel error - X4A(pin 4)
+
+Channel error - X5A(pin 4)
+
+Channel error - X6A(pin 4)
+
+Channel error - X7A(pin 4)
+
+Channel error - X8A(pin 4)
+Status of digital output diagnostics for channels X5B - X8B
+Channel error - X5B(pin 2)
+
+Channel error - X6B(pin 2)
+
+Channel error - X7B(pin 2)
+
+Channel error - X8B(pin 2)
+Status of IO-Link device errrors
+Device error - X1A
+
+Device error - X2A
+
+Device error - X3A
+
+Device error - X4A
+
+Device error - X5A
+
+Device error - X6A
+
+Device error - X7A
+
+Device error - X8A
+
+Status of IO-Link device warnings
+
+Device warning - X1A
+
+Device warning - X2A
+
+Device warning - X3A
+
+Device warning - X4A
+
+Device warning - X5A
+
+Device warning - X6A
+
+Device warning - X7A
+
+Device warning - X8A
+
+Status of IO-Link device notifications
+
+Device notification - X1A
+
+Device notification - X2A
+
+Device notification - X3A
+
+Device notification - X4A
+
+Device notification - X5A
+
+Device notification - X6A
+
+Device notification - X7A
+
+Device notification - X8A
+
+IO-Link master validation error
+
+Device validation error - X1A
+
+Device validation error - X2A
+
+Device validation error - X3A
+
+Device validation error - X4A
+
+Device validation error - X5A
+
+Device validation error - X6A
+
+Device validation error - X7A
+
+Device validation error - X8A
+Control of Digital Outputs X1A - X4A
+
+X1A
+
+X2A
+
+X3A
+
+X4A
+
+Control of Digital Outputs X5 - X8
+
+X5A
+X5B
+
+X6A
+
+X6B
+
+X7A
+
+X7B
+
+X8A
+
+X8B
+
+Control of IO-Link COM Mode
+
+X1A
+
+X2A
+
+X3A
+
+X4A
+
+X5A
+
+X6A
+
+X7A
+
+X8A
