@@ -21,33 +21,29 @@ varNames = np.asarray(varNames)
 rightVals = list(stateTags_df.iloc[:,1].values)
 
 def rectification():#will pass custom rectification on basis of errorNode
-    f = open("sensor use case.net",'r')
-    lines = f.readlines()
-    mystr = ' '.join([line.strip() for line in lines])
-    allNodes = readNodes(mystr)
-    inv_Nodes = {a:b for b,a in allNodes.items()}
-    allConnections = readConnections(mystr,allNodes.keys())
-    newConnections = {}
-    for y in allConnections:
-        newConnections[y['component']] = y['connections']
+#    f = open("sensor use case.net",'r')
+#    lines = f.readlines()
+#    mystr = ' '.join([line.strip() for line in lines])
+#    allNodes = readNodes(mystr)
+#    inv_Nodes = {a:b for b,a in allNodes.items()}
+#    allConnections = readConnections(mystr,allNodes.keys())
+#    newConnections = {}
+#    for y in allConnections:
+#        newConnections[y['component']] = y['connections']
     node = 'IO_Link'
-    print("Please check these following connections for power")
     nodeType = 'power'
+    print("Please check the 24V supply between SMPS and IO Link manually using the connections below:")
     searchConnections(inv_Nodes[node],nodeType,newConnections)
-    print("Please check these following connections for port")
-    nodeType = 'Port'
-    searchConnections(inv_Nodes[node],nodeType,newConnections)
-
-
-    print('Please check the voltage at the port\n')
-    prompt = input('Is the voltage at correct value?:(yes/no)')
-    if prompt.lower() == 'yes':
-        print('Replace the sensor')
-    if prompt.lower() == 'no':
-        print('Change the port and try again\n')
-        prompt2 = input('Is there an error in sensor readings:') 
-        if prompt2.lower() ==  'yes':
-            print('Replace the sensor')
+    prompt = input("Is the 24V supply connection correct(yes/no)")
+    if prompt.lower == "yes":
+        print("Please check IO Link port power supply manually using the connections below:")
+        nodeType = 'Port' 
+        searchConnections(inv_Nodes[node],nodeType,newConnections)
+        prompt = input("Is the power supply right after changing the port(yes/no)")
+        if prompt.lower == "yes":
+            prompt2 = input("Is the sensor operating")
+            if prompt2.lower == "no"
+                print("Replace the sensor")
  
 def all_check(tag_list):
     return sum(tag_list)
@@ -73,7 +69,7 @@ def reasons(nameTags):
             if re.search(regex_queries[j],k):
                 if rightValDict[k] != detailsDict[k].get_value():
                     print("Reason for Error:",k)
-                    rectification(k)
+                    rectification()
                 
 def faults(tags, event_num):
     global rectificationFlag
@@ -123,13 +119,13 @@ def datafile():
     filename = 'correct_tags.csv'
     df_db.to_csv(filename, index=False)
 
-class SubHandler(object):
-    def datachange_notification(self, node, val, data):
-        global flag
-        global ewon
-    df_db['TIMESTAMPS'] = time_array
-    filename = 'correct_tags.csv'
-    df_db.to_csv(filename, index=False)
+#class SubHandler(object):
+#    def datachange_notification(self, node, val, data):
+#        global flag
+#        global ewon
+#    df_db['TIMESTAMPS'] = time_array
+#    filename = 'correct_tags.csv'
+#    df_db.to_csv(filename, index=False)
 
 class SubHandler(object):
     def datachange_notification(self, node, val, data):
@@ -334,6 +330,15 @@ if __name__ == '__main__':
         varNames = stateTags_df.iloc[:, 0].values
         varNames = np.asarray(varNames)
         rightVals = list(stateTags_df.iloc[:, 1].values)
+        f = open("sensor use case.net",'r')
+        lines = f.readlines()
+        mystr = ' '.join([line.strip() for line in lines])
+        allNodes = readNodes(mystr)
+        inv_Nodes = {a:b for b,a in allNodes.items()}
+        allConnections = readConnections(mystr,allNodes.keys())
+        newConnections = {}
+        for y in allConnections:
+            newConnections[y['component']] = y['connections']
 
     except FileNotFoundError:
         print("File not found")
