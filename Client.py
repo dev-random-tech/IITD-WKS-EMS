@@ -12,75 +12,100 @@ import re
 from readFileRegex import *
 
 ct_df = pd.read_csv('correct_tags.csv')
-correct_tags = ct_df.loc[:,"POWERSTATUS":"EXIT1"].values
+correct_tags = ct_df.loc[:, "POWERSTATUS":"EXIT1"].values
 temp = np.asarray(ct_df.columns)
-tag_names = np.delete(temp,0)
+tag_names = np.delete(temp, 0)
 stateTags_df = pd.read_csv('stateNodes.csv')
-varNames = stateTags_df.iloc[:,0].values
+varNames = stateTags_df.iloc[:, 0].values
 varNames = np.asarray(varNames)
-rightVals = list(stateTags_df.iloc[:,1].values)
+rightVals = list(stateTags_df.iloc[:, 1].values)
 
-def rectification():#will pass custom rectification on basis of errorNode
-#    f = open("sensor use case.net",'r')
-#    lines = f.readlines()
-#    mystr = ' '.join([line.strip() for line in lines])
-#    allNodes = readNodes(mystr)
-#    inv_Nodes = {a:b for b,a in allNodes.items()}
-#    allConnections = readConnections(mystr,allNodes.keys())
-#    newConnections = {}
-#    for y in allConnections:
-#        newConnections[y['component']] = y['connections']
+
+def rectification():  # will pass custom rectification on basis of errorNode
+    #    f = open("sensor use case.net",'r')
+    #    lines = f.readlines()
+    #    mystr = ' '.join([line.strip() for line in lines])
+    #    allNodes = readNodes(mystr)
+    #    inv_Nodes = {a:b for b,a in allNodes.items()}
+    #    allConnections = readConnections(mystr,allNodes.keys())
+    #    newConnections = {}
+    #    for y in allConnections:
+    #        newConnections[y['component']] = y['connections']
     node = 'IO_Link'
     nodeType = 'power'
     print("Please check the 24V supply between SMPS and IO Link manually using the connections below:")
-    searchConnections(inv_Nodes[node],nodeType,newConnections)
-    prompt = input("Is the 24V supply connection correct(yes/no)")
-    if prompt.lower == "yes":
+    searchConnections(inv_Nodes[node], nodeType, newConnections)
+    prompt = input("Is the 24V supply connection correct(yes/no): ")
+    print("Prompt: ",prompt)
+    if 'yes' in prompt.lower():
         print("Please check IO Link port power supply manually using the connections below:")
-        nodeType = 'Port' 
-        searchConnections(inv_Nodes[node],nodeType,newConnections)
-        prompt = input("Is the power supply right after changing the port(yes/no)")
-        if prompt.lower == "yes":
-            prompt2 = input("Is the sensor operating")
-            if prompt2.lower == "no"
+        nodeType = 'Port'
+        searchConnections(inv_Nodes[node], nodeType, newConnections)
+        prompt = input("Is the power supply right after changing the port(yes/no): ")
+        if prompt.lower() == "yes":
+            prompt2 = input("Is the sensor operating(yes/no): ")
+            if prompt2.lower() == "no":
                 print("Replace the sensor")
- 
+            else:
+                print("yes")
+        else:
+            print("NO inner")
+    else:
+        print("NO outter")
+
+
 def all_check(tag_list):
     return sum(tag_list)
 
-def mul(a,b):  # Returns 1 if both values are same
+
+def mul(a, b):  # Returns 1 if both values are same
     if a == b:
         return 1
     else:
         return 0
 
+
 def common():
     for k in commonDict.keys():
         if commonDict[k] != detailsDict[k].get_value():
-           print("Reason for Error:",k) 
+            print("Reason for Error:", k)
+
 
 def reasons(nameTags):
     regex_queries = []
+    #print("nametags: ",nameTags)
     for i in nameTags:
         string = "^"+i+"_*"
+        # print(string)
         regex_queries.append(string)
+        # print(regex_queries)
+        # print(len(nameTags))
     for j in range(len(nameTags)):
+        #print("j: " ,j)
         for k in detailsDict.keys():
-            if re.search(regex_queries[j],k):
+            #print("k: " ,k)
+            if re.search(regex_queries[j], k):
+                #print("in if re.search")
+                #print("RV of K: ",rightValDict[k])
+                #print("DD of K: ",detailsDict[k].get_value())
+
                 if rightValDict[k] != detailsDict[k].get_value():
-                    print("Reason for Error:",k)
+                    print("Reason for Error:", k)
                     rectification()
-                
+
+
 def faults(tags, event_num):
     global rectificationFlag
     rectificationFlag = False
     op = list(map(mul, tags, list(correct_tags[event_num, :])))
     if all_check(op) != len(tags):
+        detailsDict["emergency1"].set_value(1)
         faults = list(map(bool, op))
         faults = list(map(not_, faults))
         print('Faults at:', tag_names[faults])
         common()
         reasons(tag_names[faults])
+
 
 def updateValues():
     global updateFlag
@@ -98,7 +123,7 @@ def updateValues():
                 for key in nodesDict:
                     tagList.append(nodesDict[key].get_value())
 
-                print('EventNum: ', eventCounter)
+                #print('EventNum: ', eventCounter)
                 time_array.append(datetime.now())
                 faults(tagList, eventCounter)
                 if eventCounter == 0:
@@ -119,13 +144,14 @@ def datafile():
     filename = 'correct_tags.csv'
     df_db.to_csv(filename, index=False)
 
-#class SubHandler(object):
+# class SubHandler(object):
 #    def datachange_notification(self, node, val, data):
 #        global flag
 #        global ewon
 #    df_db['TIMESTAMPS'] = time_array
 #    filename = 'correct_tags.csv'
 #    df_db.to_csv(filename, index=False)
+
 
 class SubHandler(object):
     def datachange_notification(self, node, val, data):
@@ -263,7 +289,7 @@ def main():
             detailsDict[n] = client.get_node(address)
             rightValDict[n] = value
 
-        for (name,value) in zip(commonNames,commonCorrect):
+        for (name, value) in zip(commonNames, commonCorrect):
             commonDict[name] = value
         # uncomment  when running on actual macine # for ewon
         client.connect()
@@ -317,25 +343,25 @@ if __name__ == '__main__':
         rightVal = detailed_df.iloc[:, 1].values
         nodeAddr = detailed_df.iloc[:, 2].values
         common_df = pd.read_csv('commonNodes.csv')
-        commonNames = common_df.iloc[:,0].values
-        commonCorrect = common_df.iloc[:,1].values
+        commonNames = common_df.iloc[:, 0].values
+        commonCorrect = common_df.iloc[:, 1].values
         ct_df = pd.read_csv('correct_tags.csv')
         correct_tags = ct_df.loc[:, "POWERSTATUS":"EXIT1"].values
-        #print(correct_tags)
+        # print(correct_tags)
         temp = np.asarray(ct_df.columns)
-        #print(temp)
+        # print(temp)
         tag_names = np.delete(temp, -1)
-        #print(tag_names)
+        # print(tag_names)
         stateTags_df = pd.read_csv('stateNodes.csv')
         varNames = stateTags_df.iloc[:, 0].values
         varNames = np.asarray(varNames)
         rightVals = list(stateTags_df.iloc[:, 1].values)
-        f = open("sensor use case.net",'r')
+        f = open("sensor use case.net", 'r')
         lines = f.readlines()
         mystr = ' '.join([line.strip() for line in lines])
         allNodes = readNodes(mystr)
-        inv_Nodes = {a:b for b,a in allNodes.items()}
-        allConnections = readConnections(mystr,allNodes.keys())
+        inv_Nodes = {a: b for b, a in allNodes.items()}
+        allConnections = readConnections(mystr, allNodes.keys())
         newConnections = {}
         for y in allConnections:
             newConnections[y['component']] = y['connections']
@@ -357,4 +383,3 @@ if __name__ == '__main__':
 
     thread2.join()
     thread1.join()
-

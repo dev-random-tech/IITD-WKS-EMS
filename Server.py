@@ -2,6 +2,37 @@ from opcua import Server
 import time
 from random import randint
 import pandas as pd
+import threading
+from threading import Thread
+import sys
+
+# to kill a thread
+class TraceThread(threading.Thread):
+    def __init__(self, *args, **keywords):
+        threading.Thread.__init__(self, *args, **keywords)
+        self.killed = False
+    def start(self):
+        self._run = self.run
+        self.run = self.settrace_and_run
+        threading.Thread.start(self)
+    def settrace_and_run(self):
+        sys.settrace(self.globaltrace)
+        self._run()
+    def globaltrace(self, frame, event, arg):
+        return self.localtrace if event == 'call' else None
+    def localtrace(self, frame, event, arg):
+        if self.killed and event == 'line':
+            raise SystemExit()
+        return self.localtrace
+
+
+def emergency():
+    while True:
+        if detailsDict["emergency1"].get_value():
+            print("Emergency Stop")
+            #server.stop()
+            break
+
 
 def power():
     nodesDict["POWERSTATUS"].set_value(1)
@@ -289,6 +320,32 @@ def light():
     print("Light curtain breached")
     time.sleep(120)
 
+def main():
+    q = True
+    while q == True:
+        time.sleep(3)
+        v = input("Ewon (on/off): ")
+        if (v.lower()=='on'):
+            ewon= True
+            nodesDict["POWERSTATUS"].set_value(1)
+            print('Ewon Connected: ', ewon , '\n')
+            #print(nodesDict["POWERSTATUS"].get_value())
+            q = False
+            time.sleep(3)
+            askpallet()
+        elif v.lower() =='off':
+            ewon= False
+            nodesDict["POWERSTATUS"].set_value(0)
+            print('Ewon Connected: ', ewon )
+            print("\n")
+            q = True
+        else:
+            print("Only 'on' or 'off' are allowed as input \n")
+            q= True
+
+    if exitFlag == 1:
+        askpallet()
+
 if __name__ == '__main__':
     global exitFlag
     exitFlag = 0
@@ -316,34 +373,51 @@ if __name__ == '__main__':
     for (n,address,value)  in zip(varNames,nodeAddr,rightVal):
         detailsDict[n]=node.add_variable(address,n,int(value))
         detailsDict[n].set_writable()
-    detailsDict["CONVEYOR1STATUS_vfdResetRequired"].set_value(1)
+    detailsDict["OPDIGITALOUTPUT_PowerSupply"].set_value(0)
     
     server.start()
     print("Server started \n")
-    q = True
-    while q == True:
-        time.sleep(3)
-        v = input("Ewon (on/off): ")
-        if (v.lower()=='on'):
-            ewon= True
-            nodesDict["POWERSTATUS"].set_value(1)
-            print('Ewon Connected: ', ewon , '\n')
-            print(nodesDict["POWERSTATUS"].get_value())
-            q = False
-            time.sleep(3)
-            askpallet()
-        elif v.lower() =='off':
-            ewon= False
-            nodesDict["POWERSTATUS"].set_value(0)
-            print('Ewon Connected: ', ewon )
-            print("\n")
-            q = True
-        else:
-            print("Only 'on' or 'off' are allowed as input \n")
-            q= True
 
-    if exitFlag == 1:
-        askpallet()
+    threadMain = TraceThread(target=main)
+    threadMain.start()
+    threadEmer = Thread(target=emergency)
+    threadEmer.start()
+
+    #threadMain.join()
+    #threadEmer.join()
+    threadEmer.join()
+
+
+    if threadEmer.is_alive():
+        pass
+    else:
+        threadMain.killed = True
+
+
+    # q = True
+    # while q == True:
+    #     time.sleep(3)
+    #     v = input("Ewon (on/off): ")
+    #     if (v.lower()=='on'):
+    #         ewon= True
+    #         nodesDict["POWERSTATUS"].set_value(1)
+    #         print('Ewon Connected: ', ewon , '\n')
+    #         #print(nodesDict["POWERSTATUS"].get_value())
+    #         q = False
+    #         time.sleep(3)
+    #         askpallet()
+    #     elif v.lower() =='off':
+    #         ewon= False
+    #         nodesDict["POWERSTATUS"].set_value(0)
+    #         print('Ewon Connected: ', ewon )
+    #         print("\n")
+    #         q = True
+    #     else:
+    #         print("Only 'on' or 'off' are allowed as input \n")
+    #         q= True
+
+    # if exitFlag == 1:
+    #     askpallet()
 
 else:
     dataset=pd.read_csv('funcNodes.csv')
