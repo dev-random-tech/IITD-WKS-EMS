@@ -20,7 +20,6 @@ varNames = stateTags_df.iloc[:, 0].values
 varNames = np.asarray(varNames)
 rightVals = list(stateTags_df.iloc[:, 1].values)
 
-
 def rectification():  # will pass custom rectification on basis of errorNode
     #    f = open("sensor use case.net",'r')
     #    lines = f.readlines()
@@ -356,6 +355,7 @@ if __name__ == '__main__':
         varNames = stateTags_df.iloc[:, 0].values
         varNames = np.asarray(varNames)
         rightVals = list(stateTags_df.iloc[:, 1].values)
+
         f = open("sensor use case.net", 'r')
         lines = f.readlines()
         mystr = ' '.join([line.strip() for line in lines])

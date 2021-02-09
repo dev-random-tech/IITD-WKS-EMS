@@ -44,22 +44,16 @@ def searchConnections(searchItem,searchType,connections):
         if re.search(searchQuery,j):
             print(j,"->",connections[searchItem][j])
 
-f = open("sensor use case.net",'r')
-lines = f.readlines()
-mystr = ' '.join([line.strip() for line in lines])
-allNodes = readNodes(mystr)
-inv_Nodes = {a:b for b,a in allNodes.items()}
-#print(allNodes)
-allConnections = readConnections(mystr, allNodes.keys())
-#print(allConnections)
-newConnections = {}
-for y in allConnections:
-    newConnections[y['component']] = y['connections']
+#f = open("sensor use case.net",'r')
+#lines = f.readlines()
+#mystr = ' '.join([line.strip() for line in lines])
+#allNodes = readNodes(mystr)
+#inv_Nodes = {a:b for b,a in allNodes.items()}
+#allConnections = readConnections(mystr, allNodes.keys())
+#newConnections = {}
+#for y in allConnections:
+#    newConnections[y['component']] = y['connections']
 
-#print(newConnections)
-node = 'IO_Link'
-nodeType = 'power'
-searchConnections(inv_Nodes[node],nodeType,newConnections)
 '''
 {'IOL': 'IO_Link', '24V_COM_TERMINAL': 'Terminal', '24V_TERMINAL': 'Terminal', 'OPERATIONAL_SENSOR': 'Proximity', 'GND': 'Ground'}
 [{'component': 'IOL', 'connections': {'IOL-power_COM_2': '24V_COM_TERMINAL-1', 'IOL-power_24V_1': '24V_TERMINAL-1', 'IOL-Port2_24V': 'OPERATIONAL_SENSOR-24Vsupply', 'IOL-Port2_24VCOM': 'OPERATIONAL_SENSOR-24VCOMsupply', 'IOL-Port2_Output': 'OPERATIONAL_SENSOR-Outputsupply', 'IOL-power_COM_3': '24V_COM_TERMINAL-3', 'IOL-power_24V_4': '24V_TERMINAL-3', 'IOL-FN_GND_5': 'GND-1'}}, {'component': '24V_COM_TERMINAL', 'connections': {'24V_COM_TERMINAL-1': 'IOL-power_COM_2', '24V_COM_TERMINAL-3': 'IOL-power_COM_3', '24V_COM_TERMINAL-2': '0V'}}, {'component': '24V_TERMINAL', 'connections': {'24V_TERMINAL-1': 'IOL-power_24V_1', '24V_TERMINAL-3': 'IOL-power_24V_4', '24V_TERMINAL-2': '+24V'}}, {'component': 'OPERATIONAL_SENSOR', 'connections': {'OPERATIONAL_SENSOR-24Vsupply': 'IOL-Port2_24V', 'OPERATIONAL_SENSOR-24VCOMsupply': 'IOL-Port2_24VCOM', 'OPERATIONAL_SENSOR-Outputsupply': 'IOL-Port2_Output'}}, {'component': 'GND', 'connections': {'GND-1': 'IOL-FN_GND_5'}}]
